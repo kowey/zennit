@@ -122,8 +122,11 @@ showCounts :: (Answer -> [T.Text]) -> V.Vector Answer -> T.Text
 showCounts f xs =
     showMap primary <>
     showMap (Map.fromList [("OTHER",length other)]) <>
-    "\n" <> T.intercalate ", " (map (snippet 10) other)
+    "\n" <> T.intercalate ", " (map (snippet 10) other) <>
+    "\n" <> responseLen
   where
+    responseLen = "Num responses:\n" <> T.pack
+        (show . Map.toList . histogram $ map (length . f) $ V.toList xs)
     snippet n t =
         if T.length t <= n
              then t
