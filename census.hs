@@ -174,7 +174,13 @@ main = do
         Left err  -> fail err
         Right res -> do
             T.putStrLn . process $ res
-            T.writeFile (bname <> "-improve.txt")  $ textual aImprovements res
-            T.writeFile (bname <> "-interest.txt") $ textual aInterest res
+            T.writeFile (bname <> "-improve.txt")  $ textual aImprovements $
+                V.filter (\a -> "more" `elem` aImproveCodes a) res
+            T.writeFile (bname <> "-interest.txt") $ textual aInterest $
+                V.filter (\a -> "more" `elem` aInterestCodes a) res
+            T.writeFile (bname <> "-full-improve.txt")  $
+                textual aImprovements res
+            T.writeFile (bname <> "-full-interest.txt") $
+                textual aInterest res
           where
             bname = dropExtensions f
