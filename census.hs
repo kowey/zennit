@@ -90,6 +90,8 @@ improvements =
     [ Lump [ "more" ]                     "see-details"
     , Lump [ "newbie" ]                   "more-newbie-friendly"
     , Lump [ "infrastructure", "events" ] "events/infrastructure"
+    , Lump [ "moderation"               ] "moderation"
+    , Lump [ "anti-ewk", "pro-ewk", "experts" ] "participants"
     ]
 
 lump :: [Lump] -> T.Text -> T.Text
