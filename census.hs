@@ -141,7 +141,8 @@ showCounts f xs =
     total :: V.Vector Answer -> Int
     total = V.length . V.filter (not . null . f)
     --
-    showMap = showPercentages
+    showMap = (<> "\n")
+            . showPercentages
             . percentages (total xs)
 
 -- ---------------------------------------------------------------------

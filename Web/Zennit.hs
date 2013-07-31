@@ -2,6 +2,7 @@
 module Web.Zennit where
 
 import           Control.Applicative
+import           Control.Arrow
 import           Control.Monad        (mzero)
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Lazy.Char8 as BLC
@@ -25,15 +26,17 @@ histogram :: Ord a => [a] -> Map.Map a Int
 histogram xs = Map.fromListWith (+) $ zip xs (repeat 1)
 
 showPercentages :: Map.Map T.Text (Int, Rational) -> T.Text
-showPercentages = T.unlines
+showPercentages = T.intercalate "\n"
                 . map showPair
                 . sortBy (flip compare `on` snd)
                 . Map.toList
   where
     showPair (k,(v,p)) =
         T.intercalate "\t" [ k, T.pack (show v), showPercent p ]
-    showPercent r =
-        T.pack $ showFFloat (Just 1) (100 * fromRational r) ""
+
+showPercent :: Rational -> T.Text
+showPercent r =
+    T.pack $ showFFloat (Just 1) (100 * fromRational r) "%"
 
 percentages :: Int -> Map.Map a Int -> Map.Map a (Int, Rational)
 percentages total xs =
@@ -47,3 +50,9 @@ partitionOther isCore m =
     (plural, Map.keys singular)
   where
     (plural, singular) = Map.partition isCore m
+
+buckets :: Ord b => (a -> b) -> [a] -> [ (b,[a]) ]
+buckets f = map (first head . unzip)
+          . groupBy ((==) `on` fst)
+          . sortBy (compare `on` fst)
+          . map (\x -> (f x, x))
