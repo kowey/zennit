@@ -18,6 +18,8 @@ import           System.FilePath
 
 import           Data.Csv
 
+import           Web.Zennit
+
 data Answer = Answer
     { aAge           :: T.Text
     , aMeditate      :: Bool
@@ -131,7 +133,7 @@ showCounts f xs =
         if T.length t <= n
              then t
              else T.take n t <> "…"
-    (primary, other) = partitionOther (count xs)
+    (primary, other) = partitionOther (> 1) (count xs)
     --
     count :: V.Vector Answer -> Map.Map T.Text Int
     count = histogram . concatMap f . V.toList
@@ -139,29 +141,8 @@ showCounts f xs =
     total :: V.Vector Answer -> Int
     total = V.length . V.filter (not . null . f)
     --
-    showMap = T.unlines
-            . map showPair
-            . sortBy (flip compare `on` snd)
-            . Map.toList
+    showMap = showPercentages
             . percentages (total xs)
-    showPair (k,(v,p)) =
-        T.intercalate "\t" [ k, T.pack (show v), showPercent p ]
-    showPercent r =
-        T.pack $ showFFloat (Just 1) (100 * fromRational r) ""
-
-percentages :: Int -> Map.Map a Int -> Map.Map a (Int, Rational)
-percentages total xs =
-    Map.map (\x -> (x, (fromIntegral x % fromIntegral total))) xs
-
-histogram :: Ord a => [a] -> Map.Map a Int
-histogram xs = Map.fromListWith (+) $ zip xs (repeat 1)
-
--- | Seperate out cases where only one person has given that answer
-partitionOther :: Map.Map T.Text Int -> (Map.Map T.Text Int, [T.Text])
-partitionOther m =
-    (plural, Map.keys singular)
-  where
-    (plural, singular) = Map.partition (> 1) m
 
 -- ---------------------------------------------------------------------
 --
