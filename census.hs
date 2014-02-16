@@ -151,7 +151,7 @@ showCounts f xs =
 
 main = do
     [f] <- getArgs
-    mp  <- decode True <$> BL.readFile f
+    mp  <- decode HasHeader <$> BL.readFile f
     case mp of
         Left err  -> fail err
         Right res -> do

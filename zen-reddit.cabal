@@ -17,9 +17,9 @@ cabal-version:       >=1.8
 executable census
   main-is:             census.hs
   -- other-modules:       
-  build-depends:       base ==4.5.*
+  build-depends:       base < 5
                ,       bytestring
-               ,       cassava
+               ,       cassava >= 0.3
                ,       containers
                ,       filepath
                ,       vector
@@ -28,7 +28,7 @@ executable census
 executable userstats
   main-is:             userstats.hs
   -- other-modules:       
-  build-depends:       base ==4.5.*
+  build-depends:       base
                ,       bytestring
                ,       cassava
                ,       containers
